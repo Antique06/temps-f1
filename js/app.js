@@ -61,6 +61,8 @@ export async function loadTimesForTrack(track) {
   // Afficher le classement
   const resultsDiv = document.getElementById("results");
   if (resultsDiv) {
+    console.log("Circuit:", track);
+    console.log("Documents trouvés:", results);
     resultsDiv.innerHTML = html;
   }
 }
