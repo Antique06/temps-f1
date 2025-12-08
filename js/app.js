@@ -1,7 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } 
+import { getFirestore, collection, addDoc, getDocs, query, where } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// 🔥 CONFIGURATION FIREBASE — REMPLACE TES VALEURS
 const firebaseConfig = {
     apiKey: "AIzaSyB2_9RohB6IEzJhnrV0B-BN6a3OHha7QfY",
     authDomain: "tempsf1.firebaseapp.com",
@@ -12,20 +13,20 @@ const firebaseConfig = {
     measurementId: "G-QZZTWGTYWL"
 };
 
+// Initialisation Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Convertit "1:32.450" → ms
-function timeToMs(t) {
-  const [min, sec] = t.split(':');
+// Convertit un temps "1:32.450" en millisecondes
+function timeToMs(timeStr) {
+  const [min, sec] = timeStr.split(":");
   return parseInt(min) * 60000 + parseFloat(sec.replace(",", ".")) * 1000;
 }
 
 // 🔹 Ajouter un temps sur un circuit
 export async function addTimeToTrack(name, track, time) {
   if (!name || !track || !time) {
-    alert("Remplis tous les champs !");
-    return;
+    throw new Error("Nom, circuit et temps requis.");
   }
 
   await addDoc(collection(db, "times"), {
@@ -38,19 +39,28 @@ export async function addTimeToTrack(name, track, time) {
 
 // 🔹 Charger le classement pour un circuit
 export async function loadTimesForTrack(track) {
+  if (!track) return;
+
+  // Filtrer uniquement les temps pour le circuit sélectionné
   const q = query(collection(db, "times"), where("track", "==", track));
   const snapshot = await getDocs(q);
 
   let results = [];
   snapshot.forEach(doc => results.push(doc.data()));
 
+  // Tri du plus rapide au plus lent
   results.sort((a, b) => a.ms - b.ms);
 
+  // Générer le HTML du classement
   let html = "<ol>";
   results.forEach(r => {
     html += `<li>${r.name} : ${r.time}</li>`;
   });
   html += "</ol>";
 
-  document.getElementById("results").innerHTML = html;
+  // Afficher le classement
+  const resultsDiv = document.getElementById("results");
+  if (resultsDiv) {
+    resultsDiv.innerHTML = html;
+  }
 }
