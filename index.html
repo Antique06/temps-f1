@@ -40,6 +40,7 @@
     <option>Abu Dhabi</option>
   </select>
   <button id="goBtn">Voir le classement</button>
+  <button id="profileBtn">👤 Mon profil</button>
 </div>
 
 <script type="module">
@@ -52,6 +53,10 @@ document.getElementById("goBtn").addEventListener("click", () => {
   const track = select.value;
   if (!track) return alert("Choisis un circuit !");
   window.location.href = "circuit.html?track=" + encodeURIComponent(track);
+});
+
+document.getElementById("profileBtn").addEventListener("click", () => {
+  window.location.href = "profile.html";
 });
 </script>
 

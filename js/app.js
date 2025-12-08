@@ -71,7 +71,7 @@ export function formatTime(seconds) {
   return `${m}:${s.padStart(6,"0")}`;
 }
 
-// Charger l’historique d’un utilisateur
+// Charger l'historique d'un utilisateur
 export async function getUserTimes(userName) {
   const q = query(collection(db, "times"), where("name", "==", userName), orderBy("timestamp", "desc"));
   const snapshot = await getDocs(q);
@@ -87,4 +87,39 @@ export async function getUserTimes(userName) {
   } else {
     historyDiv.innerHTML = "<p>Aucun temps enregistré.</p>";
   }
+}
+
+// Obtenir le meilleur temps de l'utilisateur pour chaque circuit et vérifier si c'est dans le top 3
+export async function getUserBestTimesByCircuit(userName) {
+  const q = query(collection(db, "times"), where("name", "==", userName));
+  const snapshot = await getDocs(q);
+  const bestTimesByCircuit = {};
+  
+  // Récupérer le meilleur temps pour chaque circuit
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    if (!bestTimesByCircuit[data.track] || data.time < bestTimesByCircuit[data.track].time) {
+      bestTimesByCircuit[data.track] = { time: data.time };
+    }
+  });
+  
+  // Vérifier si chaque temps est dans le top 3
+  for (const track of Object.keys(bestTimesByCircuit)) {
+    const topQ = query(collection(db, "times"), where("track", "==", track), orderBy("time"));
+    const topSnapshot = await getDocs(topQ);
+    let rank = 0;
+    let isInTop3 = false;
+    
+    topSnapshot.forEach(doc => {
+      rank++;
+      const data = doc.data();
+      if (data.name === userName && data.time === bestTimesByCircuit[track].time && rank <= 3) {
+        isInTop3 = true;
+      }
+    });
+    
+    bestTimesByCircuit[track].isInTop3 = isInTop3;
+  }
+  
+  return bestTimesByCircuit;
 }
