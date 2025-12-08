@@ -1,21 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>F1 - Temps des Amis</title>
+  <meta charset="UTF-8">
+  <title>F1 - Classement des Amis</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>🏎️ Temps F1</h1>
 
+  <h1>🏎️ Classement F1</h1>
+
+  <div class="card">
     <h2>Ajouter un temps</h2>
-    <input id="name" placeholder="Nom">
-    <input id="track" placeholder="Circuit">
-    <input id="time" placeholder="Temps (ex : 1:32.450)">
+
+    <input id="name" placeholder="Nom"><br>
+
+    <select id="track">
+      <option value="">Choisir un circuit</option>
+      <option>Bahreïn</option>
+      <option>Djeddah</option>
+      <option>Australie</option>
+      <option>Bakou</option>
+      <option>Miami</option>
+      <option>Monaco</option>
+      <option>Barcelone</option>
+      <option>Canada</option>
+      <option>Autriche</option>
+      <option>Grande-Bretagne</option>
+      <option>Hongrie</option>
+      <option>Spa</option>
+      <option>Zandvoort</option>
+      <option>Monza</option>
+      <option>Singapour</option>
+      <option>Suzuka</option>
+      <option>Qatar</option>
+      <option>USA (Austin)</option>
+      <option>Mexique</option>
+      <option>Brésil</option>
+      <option>Las Vegas</option>
+      <option>Abu Dhabi</option>
+    </select><br>
+
+    <input id="time" placeholder="Temps (ex : 1:32.450)"><br>
+
     <button onclick="addTime()">Ajouter</button>
+  </div>
 
+  <div class="card">
     <h2>Classement</h2>
-    <div id="results"></div>
+    <div id="results">Chargement...</div>
+  </div>
 
-    <script type="module" src="js/app.js"></script>
+  <script type="module" src="app.js"></script>
+
 </body>
 </html>

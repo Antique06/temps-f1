@@ -15,31 +15,48 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Ajouter un temps
+// Convertit "1:32.450" → ms
+function timeToMs(t) {
+  const [min, sec] = t.split(':');
+  return parseInt(min) * 60000 + parseFloat(sec.replace(",", ".")) * 1000;
+}
+
 window.addTime = async function () {
-    const name = document.getElementById("name").value;
-    const track = document.getElementById("track").value;
-    const time = document.getElementById("time").value;
+  const name = document.getElementById("name").value;
+  const track = document.getElementById("track").value;
+  const time = document.getElementById("time").value;
 
-    await addDoc(collection(db, "times"), {
-        name, track, time
-    });
+  if (!name || !track || !time) {
+    alert("Merci de remplir tous les champs !");
+    return;
+  }
 
-    loadTimes();
+  await addDoc(collection(db, "times"), {
+    name,
+    track,
+    time,
+    ms: timeToMs(time)
+  });
+
+  loadTimes();
 };
 
-// Charger les temps
 async function loadTimes() {
-    const querySnapshot = await getDocs(collection(db, "times"));
-    let html = "<ul>";
+  const querySnapshot = await getDocs(collection(db, "times"));
+  let results = [];
 
-    querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        html += `<li>${data.track} - ${data.name} : ${data.time}</li>`;
-    });
+  querySnapshot.forEach(doc => results.push(doc.data()));
 
-    html += "</ul>";
-    document.getElementById("results").innerHTML = html;
+  // Tri du plus rapide au plus lent
+  results.sort((a, b) => a.ms - b.ms);
+
+  let html = "<ol>";
+  results.forEach(r => {
+    html += `<li><b>${r.track}</b> — ${r.name} : ${r.time}</li>`;
+  });
+  html += "</ol>";
+
+  document.getElementById("results").innerHTML = html;
 }
 
 loadTimes();
