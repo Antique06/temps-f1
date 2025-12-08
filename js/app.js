@@ -17,18 +17,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Convertit un temps "1:32.450" en millisecondes
+// Convertit "1:32.450" en millisecondes
 function timeToMs(timeStr) {
   const [min, sec] = timeStr.split(":");
   return parseInt(min) * 60000 + parseFloat(sec.replace(",", ".")) * 1000;
 }
 
-// 🔹 Ajouter un temps sur un circuit
+// Ajouter un temps
 export async function addTimeToTrack(name, track, time) {
-  if (!name || !track || !time) {
-    throw new Error("Nom, circuit et temps requis.");
-  }
-
+  if (!name || !track || !time) throw new Error("Nom, circuit et temps requis.");
   await addDoc(collection(db, "times"), {
     name,
     track,
@@ -37,32 +34,39 @@ export async function addTimeToTrack(name, track, time) {
   });
 }
 
-// 🔹 Charger le classement pour un circuit
+// Charger classement d’un circuit et top 3
 export async function loadTimesForTrack(track) {
-  if (!track) return;
-
-  // Filtrer uniquement les temps pour le circuit sélectionné
   const q = query(collection(db, "times"), where("track", "==", track));
   const snapshot = await getDocs(q);
 
   let results = [];
   snapshot.forEach(doc => results.push(doc.data()));
 
-  // Tri du plus rapide au plus lent
+  // Tri croissant
   results.sort((a, b) => a.ms - b.ms);
 
-  // Générer le HTML du classement
-  let html = "<ol>";
-  results.forEach(r => {
-    html += `<li>${r.name} : ${r.time}</li>`;
-  });
-  html += "</ol>";
-
-  // Afficher le classement
+  // Affichage classement complet
   const resultsDiv = document.getElementById("results");
   if (resultsDiv) {
-    console.log("Circuit:", track);
-    console.log("Documents trouvés:", results);
+    let html = "<ol>";
+    results.forEach(r => html += `<li>${r.name} : ${r.time}</li>`);
+    html += "</ol>";
     resultsDiv.innerHTML = html;
+  }
+
+  // Top 3
+  const top3Div = document.getElementById("top3");
+  if (top3Div) {
+    top3Div.innerHTML = "";
+    results.slice(0, 3).forEach((r, i) => {
+      let color = i === 0 ? "gold" : i === 1 ? "silver" : "peru";
+      top3Div.innerHTML += `<li style="color:${color}; font-weight:bold">${r.name} : ${r.time}</li>`;
+    });
+  }
+
+  // Graphique si canvas présent
+  const chartCanvas = document.getElementById("chartTimes");
+  if (chartCanvas) {
+    import("./charts.js").then(mod => mod.renderChart(results, chartCanvas));
   }
 }

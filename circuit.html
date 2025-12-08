@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Classement F1 - Circuit</title>
+  <title>F1 - Classement Circuit</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,41 +12,52 @@
 <div class="card">
   <h2 id="trackName"></h2>
 
-  <!-- Boutons -->
-  <button id="addTimeBtn">➕ Ajouter un temps</button>
-  <button id="backBtn">⬅️ Retour</button>
+  <div class="buttons">
+    <button id="addTimeBtn">➕ Ajouter un temps</button>
+    <button id="backBtn">⬅️ Retour</button>
+    <button id="profileBtn">👤 Mon profil</button>
+  </div>
 
-  <h3>Classement :</h3>
+  <h3>Top 3</h3>
+  <ol id="top3"></ol>
+
+  <h3>Classement complet</h3>
   <div id="results">Chargement...</div>
+
+  <canvas id="chartTimes" width="400" height="150"></canvas>
 </div>
 
 <script type="module">
-  import { loadTimesForTrack } from "./js/app.js";
+import { loadTimesForTrack } from "./js/app.js";
 
-  // Récupère le circuit depuis l'URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const track = urlParams.get("track");
+const urlParams = new URLSearchParams(window.location.search);
+const track = urlParams.get("track");
 
-  if (!track) {
-    alert("Aucun circuit sélectionné !");
-    window.location.href = "index.html";
-  }
+if (!track) {
+  alert("Aucun circuit sélectionné !");
+  window.location.href = "index.html";
+}
 
-  document.getElementById("trackName").innerText = track;
+document.getElementById("trackName").innerText = track;
 
-  // Charge le classement du circuit
-  loadTimesForTrack(track);
+// Charger le classement et top 3
+loadTimesForTrack(track);
 
-  // Bouton Ajouter un temps → renvoie vers add-time.html?track=...
-  document.getElementById("addTimeBtn").addEventListener("click", () => {
-    window.location.href = "add-time.html?track=" + encodeURIComponent(track);
-  });
+document.getElementById("addTimeBtn").addEventListener("click", () => {
+  window.location.href = "add-time.html?track=" + encodeURIComponent(track);
+});
 
-  // Bouton Retour → renvoie vers index.html
-  document.getElementById("backBtn").addEventListener("click", () => {
-    window.location.href = "index.html";
-  });
+document.getElementById("backBtn").addEventListener("click", () => {
+  window.location.href = "index.html";
+});
+
+document.getElementById("profileBtn").addEventListener("click", () => {
+  window.location.href = "profile.html";
+});
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="module" src="./js/charts.js"></script>
 
 </body>
 </html>

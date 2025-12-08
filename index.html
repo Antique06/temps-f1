@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Circuits F1</title>
+  <title>F1 - Choix du circuit</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<h1>🏎️ Sélection du circuit</h1>
+<h1>🏎️ Choisir un circuit</h1>
 
 <div class="card">
-  <h2>Choisir un circuit</h2>
+  <input id="searchCircuit" type="text" placeholder="Rechercher un circuit...">
   <select id="trackSelect">
-    <option value="">-- Choisir --</option>
+    <option value="">-- Choisir un circuit --</option>
     <option>Bahreïn</option>
     <option>Djeddah</option>
     <option>Australie</option>
@@ -36,16 +36,27 @@
     <option>Las Vegas</option>
     <option>Abu Dhabi</option>
   </select>
-
-  <button onclick="goToCircuit()">Voir le classement</button>
+  <button id="goBtn">Voir le classement</button>
 </div>
 
 <script>
-function goToCircuit() {
-  const track = document.getElementById("trackSelect").value;
+const searchInput = document.getElementById("searchCircuit");
+const select = document.getElementById("trackSelect");
+
+// Filtre dynamique des circuits
+searchInput.addEventListener("input", () => {
+  const filter = searchInput.value.toLowerCase();
+  Array.from(select.options).forEach(opt => {
+    opt.style.display = opt.text.toLowerCase().includes(filter) ? "" : "none";
+  });
+});
+
+// Bouton aller vers classement
+document.getElementById("goBtn").addEventListener("click", () => {
+  const track = select.value;
   if (!track) return alert("Choisis un circuit !");
   window.location.href = "circuit.html?track=" + encodeURIComponent(track);
-}
+});
 </script>
 
 </body>

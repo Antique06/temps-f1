@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Ajouter un temps - F1</title>
+  <title>F1 - Ajouter un temps</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,53 +12,47 @@
 <div class="card">
   <h2 id="trackName"></h2>
 
-  <!-- Bouton Retour -->
   <button id="backBtn">⬅️ Retour</button>
 
-  <!-- Formulaire ajout temps -->
   <input id="name" placeholder="Nom"><br>
   <input id="time" placeholder="Temps (ex : 1:32.450)"><br>
   <button id="addTimeBtn">Ajouter</button>
 </div>
 
 <script type="module">
-  import { addTimeToTrack } from "./js/app.js";
+import { addTimeToTrack } from "./js/app.js";
 
-  // Récupère le circuit depuis l'URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const track = urlParams.get("track");
+const urlParams = new URLSearchParams(window.location.search);
+const track = urlParams.get("track");
 
-  if (!track) {
-    alert("Aucun circuit sélectionné !");
-    window.location.href = "index.html";
-  }
+if (!track) {
+  alert("Aucun circuit sélectionné !");
+  window.location.href = "index.html";
+}
 
-  document.getElementById("trackName").innerText = track;
+document.getElementById("trackName").innerText = track;
 
-  // Bouton Retour → renvoie vers circuit.html
-  document.getElementById("backBtn").addEventListener("click", () => {
+// Retour
+document.getElementById("backBtn").addEventListener("click", () => {
+  window.location.href = "circuit.html?track=" + encodeURIComponent(track);
+});
+
+// Ajouter un temps
+document.getElementById("addTimeBtn").addEventListener("click", async () => {
+  const name = document.getElementById("name").value.trim();
+  const time = document.getElementById("time").value.trim();
+
+  if (!name || !time) return alert("Remplis tous les champs !");
+
+  try {
+    await addTimeToTrack(name, track, time);
+    alert("✅ Temps ajouté !");
     window.location.href = "circuit.html?track=" + encodeURIComponent(track);
-  });
-
-  // Bouton Ajouter un temps
-  document.getElementById("addTimeBtn").addEventListener("click", async () => {
-    const name = document.getElementById("name").value.trim();
-    const time = document.getElementById("time").value.trim();
-
-    if (!name || !time) {
-      alert("Merci de remplir tous les champs !");
-      return;
-    }
-
-    try {
-      await addTimeToTrack(name, track, time);
-      // Redirige automatiquement vers le classement du circuit
-      window.location.href = "circuit.html?track=" + encodeURIComponent(track);
-    } catch (err) {
-      console.error(err);
-      alert("Erreur lors de l'ajout du temps.");
-    }
-  });
+  } catch (err) {
+    console.error(err);
+    alert("Erreur lors de l'ajout du temps.");
+  }
+});
 </script>
 
 </body>

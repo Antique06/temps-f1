@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>F1 - Profil</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h1>👤 Mon profil</h1>
+
+<div class="card">
+  <button id="backBtn">⬅️ Retour</button>
+  <button id="logoutBtn">Se déconnecter</button>
+
+  <h3>Historique de mes temps</h3>
+  <div id="history">Chargement...</div>
+</div>
+
+<script type="module">
+import { getUserTimes, logout } from "./js/auth.js";
+
+document.getElementById("backBtn").addEventListener("click", () => {
+  window.location.href = "index.html";
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  logout();
+});
+
+getUserTimes();
+</script>
+
+</body>
+</html>
