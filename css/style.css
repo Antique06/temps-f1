@@ -12,6 +12,7 @@ body {
 h1 {
   color: #ff0000;
   margin-top: 20px;
+  text-align: center;
 }
 
 .card {
@@ -27,26 +28,24 @@ h1 {
   align-items: center;
 }
 
-select {
-  padding: 15px;
-  margin: 20px 0;
+select, input, button {
   width: 100%;
+  padding: 15px;
+  margin: 10px 0;
   font-size: 1.2em;
   border-radius: 12px;
   border: none;
+  cursor: pointer;
+}
+
+select, input {
   background: #333;
   color: #fff;
-  cursor: pointer;
 }
 
 button {
   background: #ff0000;
   color: #fff;
-  border: none;
-  padding: 15px 25px;
-  font-size: 1.2em;
-  border-radius: 12px;
-  cursor: pointer;
   transition: 0.3s;
 }
 
@@ -55,7 +54,11 @@ button:hover {
   color: #ff0000;
 }
 
+canvas {
+  margin-top: 20px;
+}
+
 @media (max-width: 600px) {
   .card { width: 95%; padding: 20px; }
-  select, button { font-size: 1em; padding: 12px; }
+  select, input, button { font-size: 1em; padding: 12px; }
 }

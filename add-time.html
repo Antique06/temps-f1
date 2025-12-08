@@ -10,48 +10,53 @@
 <h1>➕ Ajouter un temps</h1>
 
 <div class="card">
+  <div id="userName">Non connecté</div>
+  <button id="loginBtn">Se connecter avec Google</button>
+  <button id="logoutBtn" style="display:none">Se déconnecter</button>
+
   <h2 id="trackName"></h2>
 
-  <button id="backBtn">⬅️ Retour</button>
-
-  <input id="name" placeholder="Nom"><br>
-  <input id="time" placeholder="Temps (ex : 1:32.450)"><br>
+  <input id="name" placeholder="Nom">
+  <input id="time" placeholder="Temps (ex : 1:32.450)">
   <button id="addTimeBtn">Ajouter</button>
+  <button id="backBtn">⬅️ Retour</button>
 </div>
 
 <script type="module">
+import { setupAuthButtons, getCurrentUser } from "./js/auth.js";
 import { addTimeToTrack } from "./js/app.js";
+
+setupAuthButtons("loginBtn", "logoutBtn", "userName");
 
 const urlParams = new URLSearchParams(window.location.search);
 const track = urlParams.get("track");
-
 if (!track) {
   alert("Aucun circuit sélectionné !");
   window.location.href = "index.html";
 }
-
 document.getElementById("trackName").innerText = track;
 
-// Retour
 document.getElementById("backBtn").addEventListener("click", () => {
   window.location.href = "circuit.html?track=" + encodeURIComponent(track);
 });
 
-// Ajouter un temps
 document.getElementById("addTimeBtn").addEventListener("click", async () => {
-  const name = document.getElementById("name").value.trim();
   const time = document.getElementById("time").value.trim();
-
-  if (!name || !time) return alert("Remplis tous les champs !");
-
-  try {
-    await addTimeToTrack(name, track, time);
-    alert("✅ Temps ajouté !");
-    window.location.href = "circuit.html?track=" + encodeURIComponent(track);
-  } catch (err) {
-    console.error(err);
-    alert("Erreur lors de l'ajout du temps.");
-  }
+  if (!time) return alert("Remplis tous les champs !");
+  
+  getCurrentUser(async user => {
+    let name = document.getElementById("name").value.trim();
+    if (user) name = user.displayName;
+    if (!name) return alert("Nom requis !");
+    try {
+      await addTimeToTrack(name, track, time);
+      alert("✅ Temps ajouté !");
+      window.location.href = "circuit.html?track=" + encodeURIComponent(track);
+    } catch (err) {
+      console.error(err);
+      alert("Erreur lors de l'ajout du temps.");
+    }
+  });
 });
 </script>
 

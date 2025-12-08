@@ -10,6 +10,10 @@
 <h1>🏎️ Choisis ton circuit</h1>
 
 <div class="card">
+  <div id="userName">Non connecté</div>
+  <button id="loginBtn">Se connecter avec Google</button>
+  <button id="logoutBtn" style="display:none">Se déconnecter</button>
+
   <select id="trackSelect">
     <option value="">-- Choisir un circuit --</option>
     <option>Bahreïn</option>
@@ -38,11 +42,13 @@
   <button id="goBtn">Voir le classement</button>
 </div>
 
-<script>
-const select = document.getElementById("trackSelect");
-const goBtn = document.getElementById("goBtn");
+<script type="module">
+import { setupAuthButtons } from "./js/auth.js";
 
-goBtn.addEventListener("click", () => {
+setupAuthButtons("loginBtn", "logoutBtn", "userName");
+
+const select = document.getElementById("trackSelect");
+document.getElementById("goBtn").addEventListener("click", () => {
   const track = select.value;
   if (!track) return alert("Choisis un circuit !");
   window.location.href = "circuit.html?track=" + encodeURIComponent(track);

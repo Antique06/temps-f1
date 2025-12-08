@@ -10,25 +10,33 @@
 <h1>👤 Mon profil</h1>
 
 <div class="card">
+  <div id="userName">Non connecté</div>
+  <button id="loginBtn">Se connecter avec Google</button>
+  <button id="logoutBtn" style="display:none">Se déconnecter</button>
   <button id="backBtn">⬅️ Retour</button>
-  <button id="logoutBtn">Se déconnecter</button>
 
   <h3>Historique de mes temps</h3>
   <div id="history">Chargement...</div>
 </div>
 
 <script type="module">
-import { getUserTimes, logout } from "./js/auth.js";
+import { setupAuthButtons, getCurrentUser } from "./js/auth.js";
+import { getUserTimes } from "./js/app.js"; // adapte pour Firestore
+
+setupAuthButtons("loginBtn", "logoutBtn", "userName");
 
 document.getElementById("backBtn").addEventListener("click", () => {
   window.location.href = "index.html";
 });
 
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  logout();
+getCurrentUser(user => {
+  if (user) {
+    // Charger les temps de l'utilisateur
+    getUserTimes(user.displayName);
+  } else {
+    document.getElementById("history").innerHTML = "<p>Connecte-toi pour voir ton historique.</p>";
+  }
 });
-
-getUserTimes();
 </script>
 
 </body>

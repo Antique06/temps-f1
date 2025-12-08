@@ -1,10 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, getDocs } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { 
+  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// 🔥 Même config que app.js
+// 🔥 Remplace par ta config Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyB2_9RohB6IEzJhnrV0B-BN6a3OHha7QfY",
     authDomain: "tempsf1.firebaseapp.com",
@@ -17,46 +16,43 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
-const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-// Connexion
-export function login() {
-  signInWithPopup(auth, provider)
-    .then(result => alert(`Connecté : ${result.user.displayName}`))
-    .catch(err => alert("Erreur login : " + err.message));
+// Persistance session (jusqu'à fermeture du navigateur)
+setPersistence(auth, browserSessionPersistence);
+
+export function setupAuthButtons(loginBtnId, logoutBtnId, userNameId) {
+  const loginBtn = document.getElementById(loginBtnId);
+  const logoutBtn = document.getElementById(logoutBtnId);
+  const userNameDiv = document.getElementById(userNameId);
+
+  if (loginBtn) {
+    loginBtn.addEventListener("click", () => {
+      signInWithPopup(auth, provider)
+        .then(result => updateUI(result.user))
+        .catch(err => alert("Erreur login : " + err.message));
+    });
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => signOut(auth).then(() => updateUI(null)));
+  }
+
+  onAuthStateChanged(auth, user => updateUI(user));
+
+  function updateUI(user) {
+    if (user) {
+      if (loginBtn) loginBtn.style.display = "none";
+      if (logoutBtn) logoutBtn.style.display = "block";
+      if (userNameDiv) userNameDiv.innerText = "Connecté : " + user.displayName;
+    } else {
+      if (loginBtn) loginBtn.style.display = "block";
+      if (logoutBtn) logoutBtn.style.display = "none";
+      if (userNameDiv) userNameDiv.innerText = "Non connecté";
+    }
+  }
 }
 
-// Déconnexion
-export function logout() {
-  signOut(auth).then(() => window.location.href = "index.html");
-}
-
-// Récupérer les temps de l’utilisateur
-export async function getUserTimes() {
-  onAuthStateChanged(auth, async user => {
-    if (!user) {
-      alert("Connecte-toi pour voir ton profil !");
-      window.location.href = "index.html";
-      return;
-    }
-
-    const q = query(collection(db, "times"), where("name", "==", user.displayName));
-    const snapshot = await getDocs(q);
-    let results = [];
-    snapshot.forEach(doc => results.push(doc.data()));
-
-    results.sort((a, b) => a.ms - b.ms);
-
-    const div = document.getElementById("history");
-    if (div) {
-      if (results.length === 0) div.innerHTML = "<p>Aucun temps enregistré.</p>";
-      else {
-        let html = "<ol>";
-        results.forEach(r => html += `<li>${r.track} : ${r.time}</li>`);
-        html += "</ol>";
-        div.innerHTML = html;
-      }
-    }
-  });
+export function getCurrentUser(callback) {
+  onAuthStateChanged(auth, user => callback(user));
 }

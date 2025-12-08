@@ -10,13 +10,14 @@
 <h1>🏎️ Classement F1</h1>
 
 <div class="card">
+  <div id="userName">Non connecté</div>
+  <button id="loginBtn">Se connecter avec Google</button>
+  <button id="logoutBtn" style="display:none">Se déconnecter</button>
+
   <h2 id="trackName"></h2>
 
-  <div class="buttons">
-    <button id="addTimeBtn">➕ Ajouter un temps</button>
-    <button id="backBtn">⬅️ Retour</button>
-    <button id="profileBtn">👤 Mon profil</button>
-  </div>
+  <button id="addTimeBtn">➕ Ajouter un temps</button>
+  <button id="backBtn">⬅️ Retour</button>
 
   <h3>Top 3</h3>
   <ol id="top3"></ol>
@@ -28,7 +29,10 @@
 </div>
 
 <script type="module">
+import { setupAuthButtons } from "./js/auth.js";
 import { loadTimesForTrack } from "./js/app.js";
+
+setupAuthButtons("loginBtn", "logoutBtn", "userName");
 
 const urlParams = new URLSearchParams(window.location.search);
 const track = urlParams.get("track");
@@ -39,20 +43,13 @@ if (!track) {
 }
 
 document.getElementById("trackName").innerText = track;
-
-// Charger le classement et top 3
 loadTimesForTrack(track);
 
 document.getElementById("addTimeBtn").addEventListener("click", () => {
   window.location.href = "add-time.html?track=" + encodeURIComponent(track);
 });
-
 document.getElementById("backBtn").addEventListener("click", () => {
   window.location.href = "index.html";
-});
-
-document.getElementById("profileBtn").addEventListener("click", () => {
-  window.location.href = "profile.html";
 });
 </script>
 
