@@ -53,21 +53,27 @@ getCurrentUser(async user => {
         div.className = "best-time";
         const timeInfo = bestTimes[track];
         let timeStr = "NA";
+        let medal = "";
         
         if (timeInfo && timeInfo.time !== undefined) {
             timeStr = formatTime(timeInfo.time);
             
-            // ✅ Appliquer la classe selon le rang
+            // Si l'utilisateur est dans le top 3
+            if (timeInfo.rank) {
             if (timeInfo.rank === 1) {
-            div.classList.add("gold");
+                div.classList.add("gold");
+                medal = "🥇 ";
             } else if (timeInfo.rank === 2) {
-            div.classList.add("silver");
+                div.classList.add("silver");
+                medal = "🥈 ";
             } else if (timeInfo.rank === 3) {
-            div.classList.add("bronze");
+                div.classList.add("bronze");
+                medal = "🥉 ";
+            }
             }
         }
         
-        div.innerText = `${track}: ${timeStr}`;
+        div.innerText = `${medal}${track}: ${timeStr}`;
         bestTimesDiv.appendChild(div);
     }
 

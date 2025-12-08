@@ -106,6 +106,36 @@ canvas {
   box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
 }
 
+.best-time.gold {
+  background: rgba(255, 215, 0, 0.1);
+  border-left: 4px solid #FFD700;
+  color: #FFD700;
+  font-weight: bold;
+  font-size: 1.2em;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.best-time.silver {
+  background: rgba(192, 192, 192, 0.1);
+  border-left: 4px solid #C0C0C0;
+  color: #C0C0C0;
+  font-weight: bold;
+  font-size: 1.1em;
+  box-shadow: 0 0 8px rgba(192, 192, 192, 0.3);
+  text-shadow: 0 0 5px rgba(192, 192, 192, 0.5);
+}
+
+.best-time.bronze {
+  background: rgba(205, 127, 50, 0.1);
+  border-left: 4px solid #CD7F32;
+  color: #CD7F32;
+  font-weight: bold;
+  font-size: 1em;
+  box-shadow: 0 0 8px rgba(205, 127, 50, 0.3);
+  text-shadow: 0 0 5px rgba(205, 127, 50, 0.5);
+}
+
 @media (max-width: 600px) {
   .card { width: 95%; padding: 20px; }
   select, input, button { font-size: 1em; padding: 12px; }
