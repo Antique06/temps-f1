@@ -7,37 +7,46 @@
 </head>
 <body>
 
-<h1>🏎️ Choisir un circuit</h1>
+<h1>🏎️ Choisis ton circuit</h1>
 
-<div class="card circuits">
-  <button onclick="goTo('Bahreïn')">Bahreïn</button>
-  <button onclick="goTo('Djeddah')">Djeddah</button>
-  <button onclick="goTo('Australie')">Australie</button>
-  <button onclick="goTo('Bakou')">Bakou</button>
-  <button onclick="goTo('Miami')">Miami</button>
-  <button onclick="goTo('Monaco')">Monaco</button>
-  <button onclick="goTo('Barcelone')">Barcelone</button>
-  <button onclick="goTo('Canada')">Canada</button>
-  <button onclick="goTo('Autriche')">Autriche</button>
-  <button onclick="goTo('Grande-Bretagne')">Grande-Bretagne</button>
-  <button onclick="goTo('Hongrie')">Hongrie</button>
-  <button onclick="goTo('Spa')">Spa</button>
-  <button onclick="goTo('Zandvoort')">Zandvoort</button>
-  <button onclick="goTo('Monza')">Monza</button>
-  <button onclick="goTo('Singapour')">Singapour</button>
-  <button onclick="goTo('Suzuka')">Suzuka</button>
-  <button onclick="goTo('Qatar')">Qatar</button>
-  <button onclick="goTo('USA (Austin)')">USA (Austin)</button>
-  <button onclick="goTo('Mexique')">Mexique</button>
-  <button onclick="goTo('Brésil')">Brésil</button>
-  <button onclick="goTo('Las Vegas')">Las Vegas</button>
-  <button onclick="goTo('Abu Dhabi')">Abu Dhabi</button>
+<div class="card">
+  <select id="trackSelect">
+    <option value="">-- Choisir un circuit --</option>
+    <option>Bahreïn</option>
+    <option>Djeddah</option>
+    <option>Australie</option>
+    <option>Bakou</option>
+    <option>Miami</option>
+    <option>Monaco</option>
+    <option>Barcelone</option>
+    <option>Canada</option>
+    <option>Autriche</option>
+    <option>Grande-Bretagne</option>
+    <option>Hongrie</option>
+    <option>Spa</option>
+    <option>Zandvoort</option>
+    <option>Monza</option>
+    <option>Singapour</option>
+    <option>Suzuka</option>
+    <option>Qatar</option>
+    <option>USA (Austin)</option>
+    <option>Mexique</option>
+    <option>Brésil</option>
+    <option>Las Vegas</option>
+    <option>Abu Dhabi</option>
+  </select>
+  <button id="goBtn">Voir le classement</button>
 </div>
 
 <script>
-function goTo(track) {
+const select = document.getElementById("trackSelect");
+const goBtn = document.getElementById("goBtn");
+
+goBtn.addEventListener("click", () => {
+  const track = select.value;
+  if (!track) return alert("Choisis un circuit !");
   window.location.href = "circuit.html?track=" + encodeURIComponent(track);
-}
+});
 </script>
 
 </body>
