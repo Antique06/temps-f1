@@ -36,13 +36,13 @@ getCurrentUser(async user => {
 
   try {
     const mod = await import("./js/app.js");
-    const { getUserBestTimesByCircuit, formatTime, getTopTimesForTrack } = mod;
+    const { getUserBestTimesByCircuit, formatTime } = mod;
 
     const bestTimes = await getUserBestTimesByCircuit(user.displayName);
     const bestTimesDiv = document.getElementById("bestTimes");
     bestTimesDiv.innerHTML = "";
 
-    // Liste de tous les circuits (à adapter selon ton application)
+    // Liste complète des circuits (à adapter selon ton app)
     const allTracks = ["Bahreïn", "Djeddah", "Australie", "Bakou", "Miami", "Monaco",
                        "Barcelone", "Canada", "Autriche", "Grande-Bretagne", "Hongrie", "Spa",
                        "Zandvoort", "Monza", "Singapour", "Suzuka", "Qatar",
@@ -53,22 +53,16 @@ getCurrentUser(async user => {
       div.className = "best-time"; // classe de base
 
       const timeInfo = bestTimes[track];
-      let timeStr = "NA"; // valeur par défaut
+      let timeStr = "NA"; // par défaut
 
       if (timeInfo && timeInfo.time !== undefined) {
         timeStr = formatTime(timeInfo.time);
 
-        // Vérifier le rang exact dans le top 3
-        const topTimes = await getTopTimesForTrack(track);
-        let rank = 0;
-        for (const t of topTimes) {
-          rank++;
-          if (t.name === user.displayName) break;
+        // On utilise directement isInTop3 pour appliquer une couleur
+        if (timeInfo.isInTop3) {
+          // Pour test, on met temporairement en doré tous les top 3
+          div.classList.add("gold");
         }
-
-        if (rank === 1) div.classList.add("gold");
-        else if (rank === 2) div.classList.add("silver");
-        else if (rank === 3) div.classList.add("bronze");
       }
 
       div.innerText = `${track}: ${timeStr}`;
