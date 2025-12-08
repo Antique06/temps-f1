@@ -29,8 +29,10 @@ document.getElementById("backBtn").addEventListener("click", () => {
 });
 
 getCurrentUser(async user => {
+  const bestTimesDiv = document.getElementById("bestTimes");
+
   if (!user) {
-    document.getElementById("bestTimes").innerHTML = "<p>Connecte-toi pour voir tes temps.</p>";
+    bestTimesDiv.innerHTML = "<p>Connecte-toi pour voir tes temps.</p>";
     return;
   }
 
@@ -39,7 +41,6 @@ getCurrentUser(async user => {
     const { getUserBestTimesByCircuit, formatTime, getTopTimesForTrack } = mod;
 
     const bestTimes = await getUserBestTimesByCircuit(user.displayName);
-    const bestTimesDiv = document.getElementById("bestTimes");
     bestTimesDiv.innerHTML = "";
 
     const allTracks = ["Bahreïn", "Djeddah", "Australie", "Bakou", "Miami", "Monaco",
@@ -48,34 +49,41 @@ getCurrentUser(async user => {
                        "USA (Austin)", "Mexique", "Brésil", "Las Vegas", "Abu Dhabi"];
 
     for (const track of allTracks) {
-      const div = document.createElement("div");
-      div.className = "best-time"; // classe de base
+      const userTimeInfo = bestTimes[track];
+      let userTimeStr = "NA";
+      let userRank = null;
 
-      const timeInfo = bestTimes[track];
-      let timeStr = "NA"; // par défaut si pas de temps
+      if (userTimeInfo && userTimeInfo.time !== undefined) {
+        userTimeStr = formatTime(userTimeInfo.time);
 
-      if (timeInfo && timeInfo.time !== undefined) {
-        timeStr = formatTime(timeInfo.time);
-
-        // Déterminer le rang exact dans le top 3
+        // Récupérer le top 3 du circuit
         const topTimes = await getTopTimesForTrack(track);
-        const userRank = topTimes.findIndex(t => t.name === user.displayName && t.time === timeInfo.time) + 1;
-
-        if (userRank === 1) div.classList.add("gold");
-        else if (userRank === 2) div.classList.add("silver");
-        else if (userRank === 3) div.classList.add("bronze");
+        for (let i = 0; i < topTimes.length && i < 3; i++) {
+          const t = topTimes[i];
+          if (t.name === user.displayName && t.time === userTimeInfo.time) {
+            userRank = i + 1; // 1 = premier, 2 = deuxième, 3 = troisième
+            break;
+          }
+        }
       }
 
-      div.innerText = `${track}: ${timeStr}`;
+      const div = document.createElement("div");
+      div.className = "best-time";
+      if (userRank === 1) div.classList.add("gold");
+      else if (userRank === 2) div.classList.add("silver");
+      else if (userRank === 3) div.classList.add("bronze");
+
+      div.innerText = `${track}: ${userTimeStr}`;
       bestTimesDiv.appendChild(div);
     }
 
   } catch (err) {
     console.error("Erreur lors du chargement des temps :", err);
-    document.getElementById("bestTimes").innerHTML = "<p>Erreur lors du chargement des temps.</p>";
+    bestTimesDiv.innerHTML = "<p>Erreur lors du chargement des temps.</p>";
   }
 });
 </script>
+
 
 </body>
 </html>
