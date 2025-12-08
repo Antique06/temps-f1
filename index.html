@@ -2,55 +2,51 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>F1 - Classement des Amis</title>
+  <title>Circuits F1</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <h1>🏎️ Classement F1</h1>
+<h1>🏎️ Sélection du circuit</h1>
 
-  <div class="card">
-    <h2>Ajouter un temps</h2>
+<div class="card">
+  <h2>Choisir un circuit</h2>
+  <select id="trackSelect">
+    <option value="">-- Choisir --</option>
+    <option>Bahreïn</option>
+    <option>Djeddah</option>
+    <option>Australie</option>
+    <option>Bakou</option>
+    <option>Miami</option>
+    <option>Monaco</option>
+    <option>Barcelone</option>
+    <option>Canada</option>
+    <option>Autriche</option>
+    <option>Grande-Bretagne</option>
+    <option>Hongrie</option>
+    <option>Spa</option>
+    <option>Zandvoort</option>
+    <option>Monza</option>
+    <option>Singapour</option>
+    <option>Suzuka</option>
+    <option>Qatar</option>
+    <option>USA (Austin)</option>
+    <option>Mexique</option>
+    <option>Brésil</option>
+    <option>Las Vegas</option>
+    <option>Abu Dhabi</option>
+  </select>
 
-    <input id="name" placeholder="Nom"><br>
+  <button onclick="goToCircuit()">Voir le classement</button>
+</div>
 
-    <select id="track">
-      <option value="">Choisir un circuit</option>
-      <option>Bahreïn</option>
-      <option>Djeddah</option>
-      <option>Australie</option>
-      <option>Bakou</option>
-      <option>Miami</option>
-      <option>Monaco</option>
-      <option>Barcelone</option>
-      <option>Canada</option>
-      <option>Autriche</option>
-      <option>Grande-Bretagne</option>
-      <option>Hongrie</option>
-      <option>Spa</option>
-      <option>Zandvoort</option>
-      <option>Monza</option>
-      <option>Singapour</option>
-      <option>Suzuka</option>
-      <option>Qatar</option>
-      <option>USA (Austin)</option>
-      <option>Mexique</option>
-      <option>Brésil</option>
-      <option>Las Vegas</option>
-      <option>Abu Dhabi</option>
-    </select><br>
-
-    <input id="time" placeholder="Temps (ex : 1:32.450)"><br>
-
-    <button onclick="addTime()">Ajouter</button>
-  </div>
-
-  <div class="card">
-    <h2>Classement</h2>
-    <div id="results">Chargement...</div>
-  </div>
-
-  <script type="module" src="js/app.js"></script>
+<script>
+function goToCircuit() {
+  const track = document.getElementById("trackSelect").value;
+  if (!track) return alert("Choisis un circuit !");
+  window.location.href = "circuit.html?track=" + encodeURIComponent(track);
+}
+</script>
 
 </body>
 </html>

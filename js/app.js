@@ -21,13 +21,10 @@ function timeToMs(t) {
   return parseInt(min) * 60000 + parseFloat(sec.replace(",", ".")) * 1000;
 }
 
-window.addTime = async function () {
-  const name = document.getElementById("name").value;
-  const track = document.getElementById("track").value;
-  const time = document.getElementById("time").value;
-
+// 🔹 Ajouter un temps sur un circuit
+export async function addTimeToTrack(name, track, time) {
   if (!name || !track || !time) {
-    alert("Merci de remplir tous les champs !");
+    alert("Remplis tous les champs !");
     return;
   }
 
@@ -37,26 +34,24 @@ window.addTime = async function () {
     time,
     ms: timeToMs(time)
   });
+}
 
-  loadTimes();
-};
+// 🔹 Charger le classement pour un circuit
+export async function loadTimesForTrack(track) {
+  const q = query(collection(db, "times"), where("track", "==", track));
+  const snapshot = await getDocs(q);
 
-async function loadTimes() {
-  const querySnapshot = await getDocs(collection(db, "times"));
   let results = [];
-
-  querySnapshot.forEach(doc => results.push(doc.data()));
+  snapshot.forEach(doc => results.push(doc.data()));
 
   // Tri du plus rapide au plus lent
   results.sort((a, b) => a.ms - b.ms);
 
   let html = "<ol>";
   results.forEach(r => {
-    html += `<li><b>${r.track}</b> — ${r.name} : ${r.time}</li>`;
+    html += `<li>${r.name} : ${r.time}</li>`;
   });
   html += "</ol>";
 
   document.getElementById("results").innerHTML = html;
 }
-
-loadTimes();

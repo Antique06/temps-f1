@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Ajouter un temps</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h1>➕ Ajouter un temps</h1>
+
+<div class="card">
+
+  <h2 id="trackName"></h2>
+
+  <input id="name" placeholder="Nom"><br>
+  <input id="time" placeholder="Temps (ex : 1:32.450)"><br>
+
+  <button onclick="addTime()">Ajouter</button>
+</div>
+
+<script type="module">
+import { addTimeToTrack } from "./js/app.js";
+
+const url = new URL(window.location.href);
+const track = url.searchParams.get("track");
+
+document.getElementById("trackName").innerText = track;
+
+window.addTime = function () {
+  const name = document.getElementById("name").value;
+  const time = document.getElementById("time").value;
+
+  addTimeToTrack(name, track, time)
+    .then(() => {
+      window.location.href = "circuit.html?track=" + encodeURIComponent(track);
+    });
+};
+</script>
+
+</body>
+</html>
