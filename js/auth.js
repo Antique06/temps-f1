@@ -21,10 +21,11 @@ const provider = new GoogleAuthProvider();
 // Persistance session (jusqu'à fermeture du navigateur)
 setPersistence(auth, browserSessionPersistence);
 
-export function setupAuthButtons(loginBtnId, logoutBtnId, userNameId) {
+export function setupAuthButtons(loginBtnId, logoutBtnId, userNameId, nameInputId) {
   const loginBtn = document.getElementById(loginBtnId);
   const logoutBtn = document.getElementById(logoutBtnId);
   const userNameDiv = document.getElementById(userNameId);
+  const nameInput = nameInputId ? document.getElementById(nameInputId) : null;
 
   if (loginBtn) {
     loginBtn.addEventListener("click", () => {
@@ -45,10 +46,12 @@ export function setupAuthButtons(loginBtnId, logoutBtnId, userNameId) {
       if (loginBtn) loginBtn.style.display = "none";
       if (logoutBtn) logoutBtn.style.display = "block";
       if (userNameDiv) userNameDiv.innerText = "Connecté : " + user.displayName;
+      if (nameInput) nameInput.value = user.displayName || "";
     } else {
       if (loginBtn) loginBtn.style.display = "block";
       if (logoutBtn) logoutBtn.style.display = "none";
       if (userNameDiv) userNameDiv.innerText = "Non connecté";
+      if (nameInput) nameInput.value = "";
     }
   }
 }

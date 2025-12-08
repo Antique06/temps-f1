@@ -26,16 +26,7 @@
 import { setupAuthButtons, getCurrentUser } from "./js/auth.js";
 import { addTimeToTrack } from "./js/app.js";
 
-setupAuthButtons("loginBtn", "logoutBtn", "userName");
-
-// Remplir automatiquement le champ "Nom" quand l'utilisateur se connecte
-getCurrentUser(user => {
-  if (user && user.displayName) {
-    document.getElementById("name").value = user.displayName;
-  } else {
-    document.getElementById("name").value = "";
-  }
-});
+setupAuthButtons("loginBtn", "logoutBtn", "userName", "name");
 
 const urlParams = new URLSearchParams(window.location.search);
 const track = urlParams.get("track");
