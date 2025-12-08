@@ -2,40 +2,50 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Classement F1</title>
+  <title>Classement F1 - Circuit</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<h1 id="title">🏎️ Classement</h1>
+<h1>🏎️ Classement F1</h1>
 
 <div class="card">
   <h2 id="trackName"></h2>
 
-  <button onclick="addTimePage()">➕ Ajouter un temps</button>
-  <button onclick="goBack()">⬅️ Retour</button>
+  <!-- Boutons -->
+  <button id="addTimeBtn">➕ Ajouter un temps</button>
+  <button id="backBtn">⬅️ Retour</button>
 
   <h3>Classement :</h3>
   <div id="results">Chargement...</div>
 </div>
 
 <script type="module">
-import { loadTimesForTrack } from "./js/app.js";
+  import { loadTimesForTrack } from "./js/app.js";
 
-const url = new URL(window.location.href);
-const track = url.searchParams.get("track");
+  // Récupère le circuit depuis l'URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const track = urlParams.get("track");
 
-document.getElementById("trackName").innerText = track;
+  if (!track) {
+    alert("Aucun circuit sélectionné !");
+    window.location.href = "index.html";
+  }
 
-loadTimesForTrack(track);
-</script>
+  document.getElementById("trackName").innerText = track;
 
-<script>
-function addTimePage() {
-  const url = new URL(window.location.href);
-  const track = url.searchParams.get("track");
-  window.location.href = "add-time.html?track=" + encodeURIComponent(track);
-}
+  // Charge le classement du circuit
+  loadTimesForTrack(track);
+
+  // Bouton Ajouter un temps → renvoie vers add-time.html?track=...
+  document.getElementById("addTimeBtn").addEventListener("click", () => {
+    window.location.href = "add-time.html?track=" + encodeURIComponent(track);
+  });
+
+  // Bouton Retour → renvoie vers index.html
+  document.getElementById("backBtn").addEventListener("click", () => {
+    window.location.href = "index.html";
+  });
 </script>
 
 </body>

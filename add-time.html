@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Ajouter un temps</title>
+  <title>Ajouter un temps - F1</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,30 +12,53 @@
 <div class="card">
   <h2 id="trackName"></h2>
 
-  <button onclick="goBack()">⬅️ Retour</button><br>
+  <!-- Bouton Retour -->
+  <button id="backBtn">⬅️ Retour</button>
 
+  <!-- Formulaire ajout temps -->
   <input id="name" placeholder="Nom"><br>
   <input id="time" placeholder="Temps (ex : 1:32.450)"><br>
-  <button onclick="addTime()">Ajouter</button>
+  <button id="addTimeBtn">Ajouter</button>
 </div>
 
 <script type="module">
-import { addTimeToTrack } from "./js/app.js";
+  import { addTimeToTrack } from "./js/app.js";
 
-const url = new URL(window.location.href);
-const track = url.searchParams.get("track");
+  // Récupère le circuit depuis l'URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const track = urlParams.get("track");
 
-document.getElementById("trackName").innerText = track;
+  if (!track) {
+    alert("Aucun circuit sélectionné !");
+    window.location.href = "index.html";
+  }
 
-window.addTime = function () {
-  const name = document.getElementById("name").value;
-  const time = document.getElementById("time").value;
+  document.getElementById("trackName").innerText = track;
 
-  addTimeToTrack(name, track, time)
-    .then(() => {
+  // Bouton Retour → renvoie vers circuit.html
+  document.getElementById("backBtn").addEventListener("click", () => {
+    window.location.href = "circuit.html?track=" + encodeURIComponent(track);
+  });
+
+  // Bouton Ajouter un temps
+  document.getElementById("addTimeBtn").addEventListener("click", async () => {
+    const name = document.getElementById("name").value.trim();
+    const time = document.getElementById("time").value.trim();
+
+    if (!name || !time) {
+      alert("Merci de remplir tous les champs !");
+      return;
+    }
+
+    try {
+      await addTimeToTrack(name, track, time);
+      // Redirige automatiquement vers le classement du circuit
       window.location.href = "circuit.html?track=" + encodeURIComponent(track);
-    });
-};
+    } catch (err) {
+      console.error(err);
+      alert("Erreur lors de l'ajout du temps.");
+    }
+  });
 </script>
 
 </body>
