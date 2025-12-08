@@ -87,36 +87,36 @@ export async function getUserTimes(userName) {
 
 // Obtenir le meilleur temps de l'utilisateur pour chaque circuit et si c'est dans le top 3
 export async function getUserBestTimesByCircuit(userName) {
-  const q = query(collection(db, "times"), where("name", "==", userName));
+  const q = query(collection(db, "times"), where("track", "==", track), orderBy("time"));
   const snapshot = await getDocs(q);
-  const bestTimesByCircuit = {};
-  
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    if (!bestTimesByCircuit[data.track] || data.time < bestTimesByCircuit[data.track].time) {
-      bestTimesByCircuit[data.track] = { time: data.time };
-    }
-  });
+  const resultsDiv = document.getElementById("results");
+  const top3List = document.getElementById("top3");
 
-  // Vérifier le rang pour chaque circuit
-  for (const track of Object.keys(bestTimesByCircuit)) {
-    const topQ = query(collection(db, "times"), where("track", "==", track), orderBy("time"));
-    const topSnapshot = await getDocs(topQ);
+  if (!snapshot.empty) {
+    resultsDiv.innerHTML = "";
+    top3List.innerHTML = "";
     let rank = 0;
-    let userRank = null;
-    
-    topSnapshot.forEach(doc => {
+    const medals = ["🥇", "🥈", "🥉"];
+    snapshot.forEach(doc => {
       rank++;
       const data = doc.data();
-      if (data.name === userName && data.time === bestTimesByCircuit[track].time && !userRank) {
-        userRank = rank;  // ✅ Capturer le rang
+      const line = document.createElement("div");
+      line.innerText = `${rank}. ${data.name} - ${formatTime(data.time)}`;
+      resultsDiv.appendChild(line);
+
+      if (rank <= 3) {
+        const li = document.createElement("li");
+        li.innerText = `${medals[rank - 1]} ${data.name} - ${formatTime(data.time)}`;
+        if (rank === 1) li.className = "gold";
+        else if (rank === 2) li.className = "silver";
+        else if (rank === 3) li.className = "bronze";
+        top3List.appendChild(li);
       }
     });
-    
-    bestTimesByCircuit[track].rank = userRank;  // ✅ Stocker le rang
+  } else {
+    resultsDiv.innerText = "Aucun temps enregistré pour ce circuit.";
+    top3List.innerHTML = "";
   }
-  
-  return bestTimesByCircuit;
 }
 
 // Récupérer le top 3 des temps pour un circuit
