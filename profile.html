@@ -29,61 +29,41 @@ document.getElementById("backBtn").addEventListener("click", () => {
 });
 
 getCurrentUser(async user => {
-  const bestTimesDiv = document.getElementById("bestTimes");
+  if (user) {
+    try {
+      // Importer dynamiquement l'API de gestion des temps
+      const mod = await import("./js/app.js");
+      const { getUserBestTimesByCircuit, formatTime } = mod;
 
-  if (!user) {
-    bestTimesDiv.innerHTML = "<p>Connecte-toi pour voir tes temps.</p>";
-    return;
-  }
-
-  try {
-    const mod = await import("./js/app.js");
-    const { getUserBestTimesByCircuit, formatTime, getTopTimesForTrack } = mod;
-
-    const bestTimes = await getUserBestTimesByCircuit(user.displayName);
-    bestTimesDiv.innerHTML = "";
-
-    const allTracks = ["Bahreïn", "Djeddah", "Australie", "Bakou", "Miami", "Monaco",
-                       "Barcelone", "Canada", "Autriche", "Grande-Bretagne", "Hongrie", "Spa",
-                       "Zandvoort", "Monza", "Singapour", "Suzuka", "Qatar",
-                       "USA (Austin)", "Mexique", "Brésil", "Las Vegas", "Abu Dhabi"];
-
-    for (const track of allTracks) {
+      // Charger les meilleurs temps de l'utilisateur par circuit
+      const bestTimes = await getUserBestTimesByCircuit(user.displayName);
+      const bestTimesDiv = document.getElementById("bestTimes");
+      
+      if (!bestTimes || Object.keys(bestTimes).length === 0) {
+        bestTimesDiv.innerHTML = "<p>Tu n'as pas encore établi de temps.</p>";
+        return;
+      }
+      
+      bestTimesDiv.innerHTML = "";
+      
+      for (const [track, timeInfo] of Object.entries(bestTimes)) {
         const div = document.createElement("div");
-        div.className = "best-time";
-        const timeInfo = bestTimes[track];
-        let timeStr = "NA";
-        let medal = "";
+        const { time, isInTop3 } = timeInfo;
+        const timeStr = time ? formatTime(time) : "Pas de temps établi";
         
-        if (timeInfo && timeInfo.time !== undefined) {
-            timeStr = formatTime(timeInfo.time);
-            
-            // Si l'utilisateur est dans le top 3
-            if (timeInfo.rank) {
-            if (timeInfo.rank === 1) {
-                div.classList.add("gold");
-                medal = "🥇 ";
-            } else if (timeInfo.rank === 2) {
-                div.classList.add("silver");
-                medal = "🥈 ";
-            } else if (timeInfo.rank === 3) {
-                div.classList.add("bronze");
-                medal = "🥉 ";
-            }
-            }
-        }
-        
-        div.innerText = `${medal}${track}: ${timeStr}`;
+        div.className = isInTop3 ? "best-time in-top3" : "best-time";
+        div.innerText = `${track}: ${timeStr}`;
         bestTimesDiv.appendChild(div);
+      }
+    } catch (err) {
+      console.error("Erreur lors de l'import de js/app.js :", err);
+      document.getElementById("bestTimes").innerHTML = "<p>Erreur lors du chargement des temps.</p>";
     }
-
-  } catch (err) {
-    console.error("Erreur lors du chargement des temps :", err);
-    bestTimesDiv.innerHTML = "<p>Erreur lors du chargement des temps.</p>";
+  } else {
+    document.getElementById("bestTimes").innerHTML = "<p>Connecte-toi pour voir tes temps.</p>";
   }
 });
 </script>
-
 
 </body>
 </html>
