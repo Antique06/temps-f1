@@ -38,6 +38,7 @@ export async function loadTimesForTrack(track) {
     resultsDiv.innerHTML = "";
     top3List.innerHTML = "";
     let rank = 0;
+    const medals = ["🥇", "🥈", "🥉"];
     snapshot.forEach(doc => {
       rank++;
       const data = doc.data();
@@ -46,7 +47,7 @@ export async function loadTimesForTrack(track) {
       resultsDiv.appendChild(line);
       if (rank <= 3) {
         const li = document.createElement("li");
-        li.innerText = `${data.name} - ${formatTime(data.time)}`;
+        li.innerText = `${medals[rank - 1]} ${data.name} - ${formatTime(data.time)}`;
         top3List.appendChild(li);
       }
       chartData.push({ name: data.name, time: data.time });
