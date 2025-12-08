@@ -1,3 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>F1 - Profil</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h1>👤 Mon profil</h1>
+
+<div class="card">
+  <div id="userName">Non connecté</div>
+  <button id="loginBtn">Se connecter avec Google</button>
+  <button id="logoutBtn" style="display:none">Se déconnecter</button>
+  <button id="backBtn">⬅️ Retour</button>
+
+  <h3>Meilleurs temps par circuit</h3>
+  <div id="bestTimes">Chargement...</div>
+</div>
+
 <script type="module">
 import { setupAuthButtons, getCurrentUser } from "./js/auth.js";
 
@@ -55,3 +76,6 @@ getCurrentUser(async user => {
   }
 });
 </script>
+
+</body>
+</html>
