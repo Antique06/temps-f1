@@ -54,6 +54,25 @@ button:hover {
   color: #ff0000;
 }
 
+/* Styles pour le Top 3 avec médailles */
+#top3 li.gold {
+  color: #FFD700;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+#top3 li.silver {
+  color: #C0C0C0;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+#top3 li.bronze {
+  color: #CD7F32;
+  font-weight: bold;
+  font-size: 1em;
+}
+
 canvas {
   margin-top: 20px;
 }

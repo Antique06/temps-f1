@@ -48,6 +48,10 @@ export async function loadTimesForTrack(track) {
       if (rank <= 3) {
         const li = document.createElement("li");
         li.innerText = `${medals[rank - 1]} ${data.name} - ${formatTime(data.time)}`;
+        // Ajouter une classe de couleur selon le rang
+        if (rank === 1) li.className = "gold";
+        else if (rank === 2) li.className = "silver";
+        else if (rank === 3) li.className = "bronze";
         top3List.appendChild(li);
       }
       chartData.push({ name: data.name, time: data.time });
