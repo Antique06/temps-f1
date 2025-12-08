@@ -49,32 +49,26 @@ getCurrentUser(async user => {
                        "USA (Austin)", "Mexique", "Brésil", "Las Vegas", "Abu Dhabi"];
 
     for (const track of allTracks) {
-      const userTimeInfo = bestTimes[track];
-      let userTimeStr = "NA";
-      let userRank = null;
-
-      if (userTimeInfo && userTimeInfo.time !== undefined) {
-        userTimeStr = formatTime(userTimeInfo.time);
-
-        // Récupérer le top 3 du circuit
-        const topTimes = await getTopTimesForTrack(track);
-        for (let i = 0; i < topTimes.length && i < 3; i++) {
-          const t = topTimes[i];
-          if (t.name === user.displayName && t.time === userTimeInfo.time) {
-            userRank = i + 1; // 1 = premier, 2 = deuxième, 3 = troisième
-            break;
-          }
+        const div = document.createElement("div");
+        div.className = "best-time";
+        const timeInfo = bestTimes[track];
+        let timeStr = "NA";
+        
+        if (timeInfo && timeInfo.time !== undefined) {
+            timeStr = formatTime(timeInfo.time);
+            
+            // ✅ Appliquer la classe selon le rang
+            if (timeInfo.rank === 1) {
+            div.classList.add("gold");
+            } else if (timeInfo.rank === 2) {
+            div.classList.add("silver");
+            } else if (timeInfo.rank === 3) {
+            div.classList.add("bronze");
+            }
         }
-      }
-
-      const div = document.createElement("div");
-      div.className = "best-time";
-      if (userRank === 1) div.classList.add("gold");
-      else if (userRank === 2) div.classList.add("silver");
-      else if (userRank === 3) div.classList.add("bronze");
-
-      div.innerText = `${track}: ${userTimeStr}`;
-      bestTimesDiv.appendChild(div);
+        
+        div.innerText = `${track}: ${timeStr}`;
+        bestTimesDiv.appendChild(div);
     }
 
   } catch (err) {

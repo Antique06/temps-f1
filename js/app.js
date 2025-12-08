@@ -90,7 +90,7 @@ export async function getUserBestTimesByCircuit(userName) {
   const q = query(collection(db, "times"), where("name", "==", userName));
   const snapshot = await getDocs(q);
   const bestTimesByCircuit = {};
-
+  
   snapshot.forEach(doc => {
     const data = doc.data();
     if (!bestTimesByCircuit[data.track] || data.time < bestTimesByCircuit[data.track].time) {
@@ -98,24 +98,24 @@ export async function getUserBestTimesByCircuit(userName) {
     }
   });
 
-  // Vérifier si chaque temps est dans le top 3
+  // Vérifier le rang pour chaque circuit
   for (const track of Object.keys(bestTimesByCircuit)) {
     const topQ = query(collection(db, "times"), where("track", "==", track), orderBy("time"));
     const topSnapshot = await getDocs(topQ);
     let rank = 0;
-    let isInTop3 = false;
-
+    let userRank = null;
+    
     topSnapshot.forEach(doc => {
       rank++;
       const data = doc.data();
-      if (data.name === userName && rank <= 3 && data.time === bestTimesByCircuit[track].time) {
-        isInTop3 = true;
+      if (data.name === userName && data.time === bestTimesByCircuit[track].time && !userRank) {
+        userRank = rank;  // ✅ Capturer le rang
       }
     });
-
-    bestTimesByCircuit[track].isInTop3 = isInTop3;
+    
+    bestTimesByCircuit[track].rank = userRank;  // ✅ Stocker le rang
   }
-
+  
   return bestTimesByCircuit;
 }
 
