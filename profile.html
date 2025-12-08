@@ -42,32 +42,31 @@ getCurrentUser(async user => {
     const bestTimesDiv = document.getElementById("bestTimes");
     bestTimesDiv.innerHTML = "";
 
-    if (!bestTimes || Object.keys(bestTimes).length === 0) {
-      bestTimesDiv.innerHTML = "<p>Tu n'as pas encore établi de temps.</p>";
-      return;
-    }
+    // Liste de tous les circuits (à adapter selon ton application)
+    const allTracks = ["Monza", "Silverstone", "Spa", "Monaco", "Suzuka"];
 
-    for (const [track, timeInfo] of Object.entries(bestTimes)) {
+    for (const track of allTracks) {
       const div = document.createElement("div");
-      const { time, isInTop3 } = timeInfo;
-      const timeStr = time ? formatTime(time) : "Pas de temps établi";
-
       div.className = "best-time"; // classe de base
 
-      if (isInTop3) {
+      const timeInfo = bestTimes[track];
+      let timeStr = "NA"; // valeur par défaut
+
+      if (timeInfo && timeInfo.time !== undefined) {
+        timeStr = formatTime(timeInfo.time);
+
+        // Vérifier le rang exact dans le top 3
         const topTimes = await getTopTimesForTrack(track);
         let rank = 0;
         for (const t of topTimes) {
-            rank++;
-            // Comparaison avec tolérance pour nombres flottants
-            if (t.name === user.displayName && Math.abs(t.time - time) < 0.001) break;
+          rank++;
+          if (t.name === user.displayName) break;
         }
 
         if (rank === 1) div.classList.add("gold");
         else if (rank === 2) div.classList.add("silver");
         else if (rank === 3) div.classList.add("bronze");
-        }
-
+      }
 
       div.innerText = `${track}: ${timeStr}`;
       bestTimesDiv.appendChild(div);
