@@ -21,9 +21,16 @@ export async function addTimeToTrack(name, track, time) {
 }
 
 // Convertir "1:32.450" en secondes pour tri
-function parseTime(str) {
+export function parseTime(str) {
   const [m, s] = str.split(":");
-  return parseInt(m)*60 + parseFloat(s);
+  return parseInt(m) * 60 + parseFloat(s);
+}
+
+// Formatter le temps en "m:ss.sss"
+export function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = (seconds % 60).toFixed(3);
+  return `${m}:${s.padStart(6, "0")}`;
 }
 
 // Charger les temps d’un circuit
@@ -32,7 +39,6 @@ export async function loadTimesForTrack(track) {
   const snapshot = await getDocs(q);
   const resultsDiv = document.getElementById("results");
   const top3List = document.getElementById("top3");
-  const chartData = [];
 
   if (!snapshot.empty) {
     resultsDiv.innerHTML = "";
@@ -45,30 +51,20 @@ export async function loadTimesForTrack(track) {
       const line = document.createElement("div");
       line.innerText = `${rank}. ${data.name} - ${formatTime(data.time)}`;
       resultsDiv.appendChild(line);
+
       if (rank <= 3) {
         const li = document.createElement("li");
         li.innerText = `${medals[rank - 1]} ${data.name} - ${formatTime(data.time)}`;
-        // Ajouter une classe de couleur selon le rang
         if (rank === 1) li.className = "gold";
         else if (rank === 2) li.className = "silver";
         else if (rank === 3) li.className = "bronze";
         top3List.appendChild(li);
       }
-      chartData.push({ name: data.name, time: data.time });
     });
-    // Trigger chart update
-    const event = new CustomEvent("chartDataReady", { detail: chartData });
-    document.dispatchEvent(event);
   } else {
     resultsDiv.innerText = "Aucun temps enregistré pour ce circuit.";
     top3List.innerHTML = "";
   }
-}
-
-export function formatTime(seconds) {
-  const m = Math.floor(seconds / 60);
-  const s = (seconds % 60).toFixed(3);
-  return `${m}:${s.padStart(6,"0")}`;
 }
 
 // Charger l'historique d'un utilisateur
@@ -89,47 +85,45 @@ export async function getUserTimes(userName) {
   }
 }
 
-// Obtenir le meilleur temps de l'utilisateur pour chaque circuit et vérifier si c'est dans le top 3
+// Obtenir le meilleur temps de l'utilisateur pour chaque circuit et si c'est dans le top 3
 export async function getUserBestTimesByCircuit(userName) {
   const q = query(collection(db, "times"), where("name", "==", userName));
   const snapshot = await getDocs(q);
   const bestTimesByCircuit = {};
-  
-  // Récupérer le meilleur temps pour chaque circuit
+
   snapshot.forEach(doc => {
     const data = doc.data();
     if (!bestTimesByCircuit[data.track] || data.time < bestTimesByCircuit[data.track].time) {
       bestTimesByCircuit[data.track] = { time: data.time };
     }
   });
-  
+
   // Vérifier si chaque temps est dans le top 3
   for (const track of Object.keys(bestTimesByCircuit)) {
     const topQ = query(collection(db, "times"), where("track", "==", track), orderBy("time"));
     const topSnapshot = await getDocs(topQ);
     let rank = 0;
     let isInTop3 = false;
-    
+
     topSnapshot.forEach(doc => {
       rank++;
       const data = doc.data();
-      if (data.name === userName && data.time === bestTimesByCircuit[track].time && rank <= 3) {
+      if (data.name === userName && rank <= 3 && data.time === bestTimesByCircuit[track].time) {
         isInTop3 = true;
       }
     });
-    
+
     bestTimesByCircuit[track].isInTop3 = isInTop3;
   }
-  
+
   return bestTimesByCircuit;
 }
 
+// Récupérer le top 3 des temps pour un circuit
 export async function getTopTimesForTrack(track) {
   const q = query(collection(db, "times"), where("track", "==", track), orderBy("time"));
   const snapshot = await getDocs(q);
   const topTimes = [];
-  snapshot.forEach(doc => {
-    topTimes.push(doc.data());
-  });
+  snapshot.forEach(doc => topTimes.push(doc.data()));
   return topTimes;
 }
