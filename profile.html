@@ -1,24 +1,3 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>F1 - Profil</title>
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-
-<h1>👤 Mon profil</h1>
-
-<div class="card">
-  <div id="userName">Non connecté</div>
-  <button id="loginBtn">Se connecter avec Google</button>
-  <button id="logoutBtn" style="display:none">Se déconnecter</button>
-  <button id="backBtn">⬅️ Retour</button>
-
-  <h3>Meilleurs temps par circuit</h3>
-  <div id="bestTimes">Chargement...</div>
-</div>
-
 <script type="module">
 import { setupAuthButtons, getCurrentUser } from "./js/auth.js";
 
@@ -36,13 +15,12 @@ getCurrentUser(async user => {
 
   try {
     const mod = await import("./js/app.js");
-    const { getUserBestTimesByCircuit, formatTime } = mod;
+    const { getUserBestTimesByCircuit, formatTime, getTopTimesForTrack } = mod;
 
     const bestTimes = await getUserBestTimesByCircuit(user.displayName);
     const bestTimesDiv = document.getElementById("bestTimes");
     bestTimesDiv.innerHTML = "";
 
-    // Liste de tous les circuits (à adapter)
     const allTracks = ["Bahreïn", "Djeddah", "Australie", "Bakou", "Miami", "Monaco",
                        "Barcelone", "Canada", "Autriche", "Grande-Bretagne", "Hongrie", "Spa",
                        "Zandvoort", "Monza", "Singapour", "Suzuka", "Qatar",
@@ -58,11 +36,13 @@ getCurrentUser(async user => {
       if (timeInfo && timeInfo.time !== undefined) {
         timeStr = formatTime(timeInfo.time);
 
-        // Si c'est dans le top 3 ET que c'est le meilleur temps (premier du top)
-        if (timeInfo.isInTop3) {
-          // On considère que le meilleur temps du top 3 est celui de l'utilisateur
-          div.classList.add("gold");
-        }
+        // Déterminer le rang exact dans le top 3
+        const topTimes = await getTopTimesForTrack(track);
+        const userRank = topTimes.findIndex(t => t.name === user.displayName && t.time === timeInfo.time) + 1;
+
+        if (userRank === 1) div.classList.add("gold");
+        else if (userRank === 2) div.classList.add("silver");
+        else if (userRank === 3) div.classList.add("bronze");
       }
 
       div.innerText = `${track}: ${timeStr}`;
@@ -70,11 +50,8 @@ getCurrentUser(async user => {
     }
 
   } catch (err) {
-    console.error("Erreur lors de l'import de js/app.js :", err);
+    console.error("Erreur lors du chargement des temps :", err);
     document.getElementById("bestTimes").innerHTML = "<p>Erreur lors du chargement des temps.</p>";
   }
 });
 </script>
-
-</body>
-</html>
