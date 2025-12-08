@@ -51,7 +51,24 @@ getCurrentUser(async user => {
         const { time, isInTop3 } = timeInfo;
         const timeStr = time ? formatTime(time) : "Pas de temps établi";
         
-        div.className = isInTop3 ? "best-time in-top3" : "best-time";
+        div.className = "best-time"; // classe de base
+        if (isInTop3) {
+        // Déterminer le rang exact pour la couleur
+        const mod = await import("./js/app.js");
+        const { getTopTimesForTrack, formatTime } = mod;
+
+        // Charger le top 3 pour ce circuit
+        const topTimesSnapshot = await getTopTimesForTrack(track);
+        let rank = 0;
+        for (const t of topTimesSnapshot) {
+            rank++;
+            if (t.name === user.displayName && t.time === time) break;
+        }
+
+        if (rank === 1) div.classList.add("gold");
+        else if (rank === 2) div.classList.add("silver");
+        else if (rank === 3) div.classList.add("bronze");
+        }
         div.innerText = `${track}: ${timeStr}`;
         bestTimesDiv.appendChild(div);
       }

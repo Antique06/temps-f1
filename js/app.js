@@ -123,3 +123,13 @@ export async function getUserBestTimesByCircuit(userName) {
   
   return bestTimesByCircuit;
 }
+
+export async function getTopTimesForTrack(track) {
+  const q = query(collection(db, "times"), where("track", "==", track), orderBy("time"));
+  const snapshot = await getDocs(q);
+  const topTimes = [];
+  snapshot.forEach(doc => {
+    topTimes.push(doc.data());
+  });
+  return topTimes;
+}
