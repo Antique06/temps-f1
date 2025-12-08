@@ -44,7 +44,6 @@ export async function loadTimesForTrack(track) {
   let results = [];
   snapshot.forEach(doc => results.push(doc.data()));
 
-  // Tri du plus rapide au plus lent
   results.sort((a, b) => a.ms - b.ms);
 
   let html = "<ol>";
