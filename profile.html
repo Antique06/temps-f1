@@ -42,25 +42,22 @@ getCurrentUser(async user => {
     const bestTimesDiv = document.getElementById("bestTimes");
     bestTimesDiv.innerHTML = "";
 
-    // Liste complète des circuits (à adapter selon ton app)
-    const allTracks = ["Bahreïn", "Djeddah", "Australie", "Bakou", "Miami", "Monaco",
-                       "Barcelone", "Canada", "Autriche", "Grande-Bretagne", "Hongrie", "Spa",
-                       "Zandvoort", "Monza", "Singapour", "Suzuka", "Qatar",
-                       "USA (Austin)", "Mexique", "Brésil", "Las Vegas", "Abu Dhabi"];
+    // Liste de tous les circuits (à adapter)
+    const allTracks = ["Monza", "Silverstone", "Spa", "Monaco", "Suzuka"];
 
     for (const track of allTracks) {
       const div = document.createElement("div");
       div.className = "best-time"; // classe de base
 
       const timeInfo = bestTimes[track];
-      let timeStr = "NA"; // par défaut
+      let timeStr = "NA"; // par défaut si pas de temps
 
       if (timeInfo && timeInfo.time !== undefined) {
         timeStr = formatTime(timeInfo.time);
 
-        // On utilise directement isInTop3 pour appliquer une couleur
+        // Si c'est dans le top 3 ET que c'est le meilleur temps (premier du top)
         if (timeInfo.isInTop3) {
-          // Pour test, on met temporairement en doré tous les top 3
+          // On considère que le meilleur temps du top 3 est celui de l'utilisateur
           div.classList.add("gold");
         }
       }
