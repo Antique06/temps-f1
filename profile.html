@@ -43,10 +43,10 @@ getCurrentUser(async user => {
     const bestTimes = await getUserBestTimesByCircuit(user.displayName);
     bestTimesDiv.innerHTML = "";
 
-    const allTracks = ["Bahreïn", "Djeddah", "Australie", "Bakou", "Miami", "Monaco",
-                       "Barcelone", "Canada", "Autriche", "Grande-Bretagne", "Hongrie", "Spa",
-                       "Zandvoort", "Monza", "Singapour", "Suzuka", "Qatar",
-                       "USA (Austin)", "Mexique", "Brésil", "Las Vegas", "Abu Dhabi"];
+    const allTracks = [ "Australie", "Chine", "Suzuka", "Bahreïn", "Djeddah", "Miami",
+                        "Canada", "Monaco", "Barcelone", "Autriche", "Grande-Bretagne", "Spa",
+                        "Hongrie", "Zandvoort", "Monza", "Madrid", "Bakou", "Singapour",
+                        "USA (Austin)", "Mexique", "Brésil", "Las Vegas", "Qatar", "Abu Dhabi"];
 
     for (const track of allTracks) {
         const div = document.createElement("div");
